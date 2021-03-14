@@ -53,4 +53,5 @@ echo 'source .bashrc' > /root/.bash_profile
 echo 'alias vi          vim' >>  /home/${MYUSER}/.cshrc
 echo alias vi=\'vim\' >> /home/${MYUSER}/.bashrc
 echo 'source .bashrc' > /home/${MYUSER}/.bash_profile
+
 reboot
