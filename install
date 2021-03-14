@@ -1,0 +1,57 @@
+#!/bin/sh
+chmod +x install
+# Remove src from update since it's not installed
+# See https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=198030
+sed -i.bak -e s/Components\ src\ world\ kernel/Components\ world\ kernel/g /etc/freebsd-update.conf
+
+env PAGER=cat freebsd-update fetch
+freebsd-update install 
+
+echo "==> Installing packages"
+env ASSUME_ALWAYS_YES=YES pkg bootstrap
+env ASSUME_ALWAYS_YES=YES pkg update -f
+pkg install -y sudo bash rsync >> /dev/null 2>&1
+echo "==> Add users and groups"
+MYUSER='zeus'
+echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /usr/local/etc/sudoers
+sed -i '' 's/KOI8-R/UTF-8/g' /etc/login.conf
+cap_mkdb /etc/login.conf
+pw usermod ${MYUSER} -L russian
+pw usermod ${MYUSER} -s /usr/local/bin/bash
+
+echo "==> Custom applications"
+echo 'alias ls          ls -G' >> /root/.cshrc
+echo alias ls=\'ls -G\' > /root/.bashrc
+echo 'source .bashrc' > /root/.bash_profile
+echo 'alias ls          ls -G' > /home/${MYUSER}/.cshrc
+echo alias ls=\'ls -G\' > /home/${MYUSER}/.bashrc
+echo 'source .bashrc' > /home/${MYUSER}/.bash_profile
+
+echo "==> Tuning of system"
+echo 'kern.coredump=0' >> /etc/sysctl.conf
+echo 'console.info                                   /var/log/console.log' >> /etc/syslog.conf
+touch /var/log/console.log
+chmod 600 /var/log/console.log
+pkg ins -y vim mc cdrtools git figlet unzip xorriso onedrive >> /dev/null 2>&1
+
+echo "==> Add FTP server"
+pw useradd ftp -m
+pw usermod ftp -G ftp
+cat /etc/passwd | grep ftp
+echo 'ftpd_enable="YES"' >> /etc/rc.conf
+echo 'ftpd_flags="-D -l -m"' >> /etc/rc.conf
+chown -R ftp:ftp /home/ftp
+chmod -R 777 /home/ftp
+
+echo "==> Configure VIM"
+cd /usr/local/share/vim/vim82
+cp vimrc_example.vim /usr/local/share/vimrc
+echo 'syntax on' > /root/.vimrc
+echo 'colorscheme murphy' >> /root/.vimrc
+echo 'alias vi          vim' >> /root/.cshrc
+echo alias vi=\'vim\' >> /root/.bashrc
+echo 'source .bashrc' > /root/.bash_profile
+echo 'alias vi          vim' >>  /home/${MYUSER}/.cshrc
+echo alias vi=\'vim\' >> /home/${MYUSER}/.bashrc
+echo 'source .bashrc' > /home/${MYUSER}/.bash_profile
+reboot
