@@ -1,5 +1,4 @@
 #!/bin/sh
-chmod +x install
 # Remove src from update since it's not installed
 # See https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=198030
 sed -i.bak -e s/Components\ src\ world\ kernel/Components\ world\ kernel/g /etc/freebsd-update.conf
