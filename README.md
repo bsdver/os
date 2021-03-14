@@ -5,7 +5,8 @@
 <br>tendawifi.com
 <br>8.8.8.8
 <br>
-Set time to UTC.
+<br>Enable sshd and moused
+<br>Set time to UTC.
 <br>Create user "zeus" and reboot
 <br>
 <br>Second step:
