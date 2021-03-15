@@ -54,4 +54,13 @@ echo 'alias vi          vim' >>  /home/${MYUSER}/.cshrc
 echo alias vi=\'vim\' >> /home/${MYUSER}/.bashrc
 echo 'source .bashrc' > /home/${MYUSER}/.bash_profile
 
+cat << EOF >> /etc/crontab
+*       *       *       *       *       root    onedrive --synchronize
+*       *       *       *       *       root    ( sleep 10 ; onedrive --synchronize ; chmod -R +x /root/OneDrive )
+*       *       *       *       *       root    ( sleep 20 ; onedrive --synchronize ; chmod -R +x /root/OneDrive )
+*       *       *       *       *       root    ( sleep 30 ; onedrive --synchronize ; chmod -R +x /root/OneDrive )
+*       *       *       *       *       root    ( sleep 40 ; onedrive --synchronize ; chmod -R +x /root/OneDrive )
+*       *       *       *       *       root    ( sleep 50 ; onedrive --synchronize ; chmod -R +x /root/OneDrive )
+EOF
+
 reboot
