@@ -31,7 +31,7 @@ echo 'kern.coredump=0' >> /etc/sysctl.conf
 echo 'console.info                                   /var/log/console.log' >> /etc/syslog.conf
 touch /var/log/console.log
 chmod 600 /var/log/console.log
-pkg ins -y vim mc git figlet unzip cdrtools xorriso dvd+rw-tools onedrive >> /dev/null 2>&1
+pkg ins -y vim mc git figlet unzip cdrtools xorriso onedrive >> /dev/null 2>&1
 
 echo "==> Add FTP server"
 pw useradd ftp -m
