@@ -22,3 +22,6 @@
 <br>
 <br>On other machine connect:
 <br>ssh zeus@192.168.43.10
+<br>
+<br>Run onedrive
+<br>onedrive
