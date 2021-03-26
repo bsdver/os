@@ -10,22 +10,22 @@
 <br>Create user "zeus" and reboot
 <br>
 <br>Second step:
-<br>fetch https://github.com/bsdver/os/archive/main.zip
-<br>unzip main.zip
-<br>cd os-main
+<br><code>fetch https://github.com/bsdver/so/archive/main.zip</code>
+<br><code>unzip main.zip</code>
+<br><code>cd so-main</code>
 <br>
 <br>Add permission:
-<br>chmod +x install
+<br><code>chmod +x install</code>
 <br>
 <br>Finally, run it:
-<br>./install
+<br><code>./install</code>
 <br>
 <br>On other machine connect:
-<br>ssh zeus@192.168.43.10
+<br><code>ssh zeus@192.168.43.10</code>
 <br>
 <br>Run OneDrive
-<br>onedrive
+<br><code>onedrive</code>
 <br>Run Google Drive
-<br>drive init /home/ftp/
+<br><code>drive init /home/ftp/</code>
 <br>Run Mega
-<br>megaget --bsd bsd@gmail.com --password 00 --path . /Root/bsd/bsd.tar.gz
+<br><code>megaget --bsd bsd@gmail.com --password 00 --path . /Root/bsd/bsd.tar.gz</code>
