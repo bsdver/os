@@ -23,5 +23,9 @@
 <br>On other machine connect:
 <br>ssh zeus@192.168.43.10
 <br>
-<br>Run onedrive
+<br>Run OneDrive
 <br>onedrive
+<br>Run Google Drive
+<br>drive init /home/ftp/
+<br>Run Mega
+<br>megaget --bsd bsd@gmail.com --password 00 --path . /Root/bsd/bsd.tar.gz
