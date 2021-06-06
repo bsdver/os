@@ -42,7 +42,9 @@ echo 'ftpd_flags="-D -l -m"' >> /etc/rc.conf
 chown -R ftp:ftp /home/ftp
 chmod -R 777 /home/ftp
 
-echo "==> Add GDRIVE dir"
+echo "==> Add dir"
+mkdir /cachepkg
+mkdir /external
 mkdir /home/gdrive
 
 echo "==> Configure VIM"
