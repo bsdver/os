@@ -27,5 +27,6 @@
 <br><code>onedrive</code>
 <br>Run Google Drive
 <br><code>drive init /home/ftp/</code>
+<br><code>drive init /home/gdrive/</code>
 <br>Run Mega
 <br><code>megaget --bsd bsd@gmail.com --password 00 --path . /Root/bsd/bsd.tar.gz</code>
