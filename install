@@ -43,8 +43,6 @@ chown -R ftp:ftp /home/ftp
 chmod -R 777 /home/ftp
 
 echo "==> Add dir"
-mkdir /cachepkg
-mkdir /external
 mkdir /home/gdrive
 
 echo "==> Configure VIM"
