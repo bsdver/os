@@ -42,6 +42,9 @@ echo 'ftpd_flags="-D -l -m"' >> /etc/rc.conf
 chown -R ftp:ftp /home/ftp
 chmod -R 777 /home/ftp
 
+echo "==> Add GDRIVE dir"
+mkdir /home/gdrive
+
 echo "==> Configure VIM"
 cd /usr/local/share/vim/vim82
 cp vimrc_example.vim /usr/local/share/vimrc
