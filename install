@@ -46,6 +46,7 @@ echo "==> Add dir"
 mkdir /external
 mkdir /cachepkg
 mkdir /home/gdrive
+mkdir /root/backup
 
 echo "==> Configure VIM"
 cd /usr/local/share/vim/vim82
