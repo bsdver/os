@@ -24,9 +24,13 @@
 <br><code>ssh zeus@192.168.43.10</code>
 <br>
 <br>Run OneDrive
+<br><code>cd /root</code>
 <br><code>onedrive</code>
+<br><code>onedrive -synchronize</code>
 <br>Run Google Drive
-<br><code>drive init /home/ftp/</code>
-<br><code>drive init /home/gdrive/</code>
+<br><code>cd /home/ftp/</code>
+<br><code>drive init .</code>
+<br><code>cd /home/gdrive/</code>
+<br><code>drive init .</code>
 <br>Run Mega
 <br><code>megaget --bsd bsd@gmail.com --password 00 --path . /Root/bsd/bsd.tar.gz</code>
