@@ -127,6 +127,7 @@ ubuntu_start()
 load_rc_config $name
 run_rc_command "$1"
 EOF
+   sleep 4
    sudo chmod +x /usr/local/etc/rc.d/ubuntu
    sudo sysrc ubuntu_enable=YES
    sudo mkdir -p {/compat/ubuntu/dev/fd,/compat/ubuntu/dev/shm,/compat/ubuntu/home,/compat/ubuntu/tmp,/compat/ubuntu/proc,/compat/ubuntu/sys}
