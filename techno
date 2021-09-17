@@ -20,7 +20,7 @@ echo -n 'Choose your number: '
  upd)
    ### update techno
    fetch https://github.com/bsdver/so/archive/refs/heads/main.zip
-   unzip so-main.zip
+   unzip main.zip
    mv so-main/techno .techno
    sudo chmod +x .techno
    rm -rf so-main
