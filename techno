@@ -63,7 +63,7 @@ echo -n 'Choose your number: '
    unzip main.zip
 
    # autostart and some actions
-   mv so-main/script-techno-ubuntu /usr/local/etc/rc.d/ubuntu
+   sudo mv so-main/script-techno-ubuntu /usr/local/etc/rc.d/ubuntu
    sudo chmod +x /usr/local/etc/rc.d/ubuntu
    sudo sysrc ubuntu_enable=YES
    sudo /usr/local/bin/bash -c 'mkdir -p {/compat/ubuntu/dev/fd,/compat/ubuntu/dev/shm,/compat/ubuntu/home,/compat/ubuntu/tmp,/compat/ubuntu/proc,/compat/ubuntu/sys}'
@@ -83,11 +83,11 @@ echo -n 'Choose your number: '
    sudo chroot /compat/ubuntu /bin/bash -c 'apt update ; apt install -y brave-browser'
    
    # copy other files
-   mv so-main/script-techno-brave-wrapper /compat/ubuntu/opt/brave.com/brave/brave-wrapper
+   sudo mv so-main/script-techno-brave-wrapper /compat/ubuntu/opt/brave.com/brave/brave-wrapper
    sudo chmod +x /compat/ubuntu/opt/brave.com/brave/brave-wrapper
-   mv so-main/script-techno-linux-brave /usr/local/bin/linux-brave
+   sudo mv so-main/script-techno-linux-brave /usr/local/bin/linux-brave
    sudo chmod +x /usr/local/bin/linux-brave
-   mv so-main/script-techno-brave-browser.desktop ~/.local/share/applications/brave-browser.desktop
+   sudo mv so-main/script-techno-brave-browser.desktop ~/.local/share/applications/brave-browser.desktop
    sudo chmod +x ~/.local/share/applications/brave-browser.desktop
 
    # clean
