@@ -227,7 +227,7 @@ export CHROME_WRAPPER="`readlink -f "$0"`"
 # Launch Brave through our custom brave-wrapper script:
 /compat/ubuntu/opt/brave.com/brave/brave-wrapper "$@"
 EOF
-  chmod +x /usr/local/bin/linux-brave
+  sudo chmod +x /usr/local/bin/linux-brave
 cat << EOF >  ~/.local/share/applications/brave-browser.desktop
 [Desktop Entry]
 Type=Application
