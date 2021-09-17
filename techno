@@ -54,7 +54,8 @@ echo -n 'Choose your number: '
    lxterminal --geometry=40x4 -e 'sudo pkg ins -y debootstrap' &
   ;;   
   sus)
-sudo cat << EOF > /usr/local/etc/rc.d/ubuntu    
+sudo -s
+cat << EOF > /usr/local/etc/rc.d/ubuntu    
 #!/bin/sh
 #
 # PROVIDE: ubuntu
@@ -128,12 +129,12 @@ load_rc_config $name
 run_rc_command "$1"
 EOF
    sleep 4
-   sudo chmod +x /usr/local/etc/rc.d/ubuntu
-   sudo sysrc ubuntu_enable=YES
-   sudo mkdir -p {/compat/ubuntu/dev/fd,/compat/ubuntu/dev/shm,/compat/ubuntu/home,/compat/ubuntu/tmp,/compat/ubuntu/proc,/compat/ubuntu/sys}
-   sudo service ubuntu start
-   sudo debootstrap --arch=amd64 --no-check-gpg focal /compat/ubuntu
-   sudo service ubuntu restart
+   chmod +x /usr/local/etc/rc.d/ubuntu
+   sysrc ubuntu_enable=YES
+   mkdir -p {/compat/ubuntu/dev/fd,/compat/ubuntu/dev/shm,/compat/ubuntu/home,/compat/ubuntu/tmp,/compat/ubuntu/proc,/compat/ubuntu/sys}
+   service ubuntu start
+   debootstrap --arch=amd64 --no-check-gpg focal /compat/ubuntu
+   service ubuntu restart
    cd /compat/ubuntu/lib64/ && sudo rm ./ld-linux-x86-64.so.2 ; sudo ln -s ../lib/x86_64-linux-gnu/ld-2.31.so ld-linux-x86-64.so.2
   ;;
   susc)
