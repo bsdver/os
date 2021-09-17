@@ -17,7 +17,8 @@ echo 'prd - mkdir /usr/lib/x86_64-linux-gnu/ and download libs'
 echo '### service ubuntu compat'
 echo 'sud - install depence'
 echo 'sus - doing some'
-echo 'suc - go to chroot'
+echo 'suc - doing some in chroot'
+echo 'suf - final action'
 echo '### system commands'
 echo 'upd - close techno'
 echo 'exit - close techno'
@@ -54,7 +55,7 @@ echo -n 'Choose your number: '
    lxterminal --geometry=40x4 -e 'sudo pkg ins -y debootstrap' &
   ;;   
   sus)
-cat << EOF | sudo tee -a  /usr/local/etc/rc.d/ubuntu  
+cat << EOF | sudo tee -a /usr/local/etc/rc.d/ubuntu
 #!/bin/sh
 #
 # PROVIDE: ubuntu
@@ -146,7 +147,103 @@ EOF
    sudo chroot /compat/ubuntu /bin/bash -c 'echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list'
    sudo chroot /compat/ubuntu /bin/bash -c 'apt update ; apt install -y brave-browser'
    
-  ;;   
+  ;;
+  suf)
+cat << EOF | sudo tee -a /compat/ubuntu/opt/brave.com/brave/brave-wrapper
+#!/compat/ubuntu/bin/bash
+#
+# Copyright (c) 2011 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+HERE="/opt/brave.com/brave"
+
+# We include some xdg utilities next to the binary, and we want to prefer them
+# over the system versions when we know the system versions are very old. We
+# detect whether the system xdg utilities are sufficiently new to be likely to
+# work for us by looking for xdg-settings. If we find it, we leave $PATH alone,
+# so that the system xdg utilities (including any distro patches) will be used.
+if ! which xdg-settings &> /dev/null; then
+  # Old xdg utilities. Prepend $HERE to $PATH to use ours instead.
+  export PATH="$HERE:$PATH"
+else
+  # Use system xdg utilities. But first create mimeapps.list if it doesn't
+  # exist; some systems have bugs in xdg-mime that make it fail without it.
+  xdg_app_dir="${XDG_DATA_HOME:-$HOME/.local/share/applications}"
+  mkdir -p "$xdg_app_dir"
+  [ -f "$xdg_app_dir/mimeapps.list" ] || touch "$xdg_app_dir/mimeapps.list"
+fi
+
+# Always use our versions of ffmpeg libs.
+# This also makes RPMs find the compatibly-named library symlinks.
+if [[ -n "$LD_LIBRARY_PATH" ]]; then
+  LD_LIBRARY_PATH="$HERE:$HERE/lib:$LD_LIBRARY_PATH"
+else
+  LD_LIBRARY_PATH="$HERE:$HERE/lib"
+fi
+export LD_LIBRARY_PATH
+
+export CHROME_VERSION_EXTRA="stable"
+
+# We don't want bug-buddy intercepting our crashes. http://crbug.com/24120
+export GNOME_DISABLE_CRASH_DIALOG=SET_BY_GOOGLE_CHROME
+
+# Sanitize std{in,out,err} because they'll be shared with untrusted child
+# processes (http://crbug.com/376567).
+exec < /dev/null
+exec > >(exec cat)
+exec 2> >(exec cat >&2)
+
+"$HERE/brave" --no-sandbox --test-type --v=0 "$@" || true
+EOF
+  sudo chmod +x /compat/ubuntu/opt/brave.com/brave/brave-wrapper
+cat << EOF | sudo tee -a /usr/local/bin/linux-brave
+#!/bin/sh
+
+# Ensure having working sound, independently of the DE/WM in use:
+get_pa_sock_path()
+{
+        PA_SOCK_PATH=$(sockstat | awk -v me=$(whoami) -F'[ \t]+' '
+                $1 == me && $2 == "pulseaudio" && $6 ~ /native/ {
+                        print $6;
+                        exit 0
+                }'
+        )
+}
+
+get_pa_sock_path
+if [ ! -S "$PA_SOCK_PATH" ]; then
+        while killall pulseaudio; do
+                sleep 0.5
+        done
+        pulseaudio --start
+        get_pa_sock_path
+fi
+[ -S "$PA_SOCK_PATH" ] && export PULSE_SERVER=unix:$PA_SOCK_PATH
+
+# Let the wrapped binary know that it has been run through the wrapper:
+export CHROME_WRAPPER="`readlink -f "$0"`"
+
+# Launch Brave through our custom brave-wrapper script:
+/compat/ubuntu/opt/brave.com/brave/brave-wrapper "$@"
+EOF
+  chmod +x /usr/local/bin/linux-brave
+cat << EOF >  ~/.local/share/applications/brave-browser.desktop
+[Desktop Entry]
+Type=Application
+Version=1.0
+Encoding=UTF-8
+Name=Brave Web Browser
+Comment=Access the Internet
+Icon=brave-browser
+Exec=/usr/local/bin/linux-brave %U
+Categories=Application;Network;WebBrowser;
+MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
+StartupNotify=true
+EOF
+  sudo chmod +x ~/.local/share/applications/brave-browser.desktop
+
+  ;;
   upd)
    ### update techno
    fetch https://github.com/bsdver/so/archive/refs/heads/main.zip
