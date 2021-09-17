@@ -17,6 +17,7 @@ echo 'prd - mkdir /usr/lib/x86_64-linux-gnu/ and download libs'
 echo '### service ubuntu compat'
 echo 'sud - install depence'
 echo 'sus - doing some'
+echo 'susc - doing some'
 echo '### system commands'
 echo 'upd - close techno'
 echo 'exit - close techno'
@@ -50,10 +51,92 @@ echo -n 'Choose your number: '
    lxterminal --geometry=40x4 -e 'chrome https://drive.google.com/file/d/1zq4wvy7Cu9h4tzPzXHrmulhQlpcPzjBz/view?usp=sharing' &
   ;;
   sud)
-   lxterminal --geometry=40x4 -e 'sudo pkg ins debootstrap' &
+   lxterminal --geometry=40x4 -e 'sudo pkg ins -y debootstrap' &
   ;;   
   sus)
-   
+cat << EOF > /usr/local/etc/rc.d/ubuntu    
+#!/bin/sh
+#
+# PROVIDE: ubuntu
+# REQUIRE: archdep mountlate
+# KEYWORD: nojail
+#
+# This is a modified version of /etc/rc.d/linux
+# Based on the script by mrclksr:
+# https://github.com/mrclksr/linux-browser-installer/blob/main/rc.d/ubuntu.in
+#
+. /etc/rc.subr
+
+name="ubuntu"
+desc="Enable Ubuntu chroot, and Linux ABI"
+rcvar="ubuntu_enable"
+start_cmd="${name}_start"
+stop_cmd=":"
+
+unmounted()
+{
+    [ `stat -f "%d" "$1"` == `stat -f "%d" "$1/.."` -a \
+      `stat -f "%i" "$1"` != `stat -f "%i" "$1/.."` ]
+}
+
+ubuntu_start()
+{
+    local _emul_path _tmpdir
+
+    load_kld -e 'linux(aout|elf)' linux
+    case `sysctl -n hw.machine_arch` in
+    amd64)
+        load_kld -e 'linux64elf' linux64
+        ;;
+    esac
+    if [ -x /compat/ubuntu/sbin/ldconfigDisabled ]; then
+        _tmpdir=`mktemp -d -t linux-ldconfig`
+        /compat/ubuntu/sbin/ldconfig -C ${_tmpdir}/ld.so.cache
+        if ! cmp -s ${_tmpdir}/ld.so.cache /compat/ubuntu/etc/ld.so.cache; then
+            cat ${_tmpdir}/ld.so.cache > /compat/ubuntu/etc/ld.so.cache
+        fi
+        rm -rf ${_tmpdir}
+    fi
+
+    # Linux uses the pre-pts(4) tty naming scheme.
+    load_kld pty
+
+    # Handle unbranded ELF executables by defaulting to ELFOSABI_LINUX.
+    if [ `sysctl -ni kern.elf64.fallback_brand` -eq "-1" ]; then
+        sysctl kern.elf64.fallback_brand=3 > /dev/null
+    fi
+
+    if [ `sysctl -ni kern.elf32.fallback_brand` -eq "-1" ]; then
+        sysctl kern.elf32.fallback_brand=3 > /dev/null
+    fi
+    sysctl compat.linux.emul_path=/compat/ubuntu
+
+    _emul_path="/compat/ubuntu"
+    unmounted "${_emul_path}/dev" && (mount -o nocover -t devfs devfs "${_emul_path}/dev" || exit 1)
+    unmounted "${_emul_path}/dev/fd" && (mount -o nocover,linrdlnk -t fdescfs fdescfs "${_emul_path}/dev/fd" || exit 1)
+    unmounted "${_emul_path}/dev/shm" && (mount -o nocover,mode=1777 -t tmpfs tmpfs "${_emul_path}/dev/shm" || exit 1)
+    unmounted "${_emul_path}/home" && (mount -t nullfs /home "${_emul_path}/home" || exit 1)
+    unmounted "${_emul_path}/proc" && (mount -o nocover -t linprocfs linprocfs "${_emul_path}/proc" || exit 1)
+    unmounted "${_emul_path}/sys" && (mount -o nocover -t linsysfs linsysfs "${_emul_path}/sys" || exit 1)
+    unmounted "${_emul_path}/tmp" && (mount -t nullfs /tmp "${_emul_path}/tmp" || exit 1)
+    unmounted /dev/fd && (mount -o nocover -t fdescfs fdescfs /dev/fd || exit 1)
+    unmounted /proc && (mount -o nocover -t procfs procfs /proc || exit 1)
+    true
+}
+
+load_rc_config $name
+run_rc_command "$1"
+EOF
+   sudo chmod +x /usr/local/etc/rc.d/ubuntu
+   sudo sysrc ubuntu_enable=YES
+   sudo mkdir -p {/compat/ubuntu/dev/fd,/compat/ubuntu/dev/shm,/compat/ubuntu/home,/compat/ubuntu/tmp,/compat/ubuntu/proc,/compat/ubuntu/sys}
+   sudo service ubuntu start
+   sudo debootstrap --arch=amd64 --no-check-gpg focal /compat/ubuntu
+   sudo service ubuntu restart
+   sudo cd /compat/ubuntu/lib64/ && rm ./ld-linux-x86-64.so.2 ; ln -s ../lib/x86_64-linux-gnu/ld-2.31.so ld-linux-x86-64.so.2
+  ;;
+  susc)
+   chroot /compat/ubuntu /bin/bash
   ;;   
   upd)
    ### update techno
@@ -77,3 +160,4 @@ echo -n 'Choose your number: '
   ;;
  esac
 done
+
