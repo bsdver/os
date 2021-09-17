@@ -1,0 +1,40 @@
+#!/bin/sh
+
+while :
+do
+
+clear
+
+echo '### create i386-wine-pkg.tar.xz (beta)'
+
+echo 'exit - close techno'
+echo ''
+echo -n 'Choose your number: '
+ read ans
+ case "$ans" in
+  1)
+  export XZ_OPT=-9 
+  tar cvJf .i386-wine-pkg.tar.xz .i386-wine-pkg
+  ;;
+ upd)
+   ### update techno
+   fetch https://github.com/bsdver/so/archive/refs/heads/main.zip
+   unzip main.zip
+   mv os-go/techno .techno
+   sudo chmod +x .utils
+   rm -rf os-go
+   rm go.zip
+   xterm -geometry 73x41-0-25 -e ./.utils &
+   sleep 2
+   break
+ ;;
+ exit)
+   echo 'Exit.'
+   sleep 1
+   break
+ ;;
+ *)
+   echo "Error. Please, type number. Start again..."
+ ;;
+ esac
+done
