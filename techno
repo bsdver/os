@@ -9,7 +9,7 @@ echo '### backup for proton packages'
 echo 'bp - create .i386-wine-pkg.tar.xz'
 echo '### portwine'
 echo 'pp - prepare for portwine'
-echo 'pi - installation of portwine'
+echo 'pi - remove all files of portwine'
 echo '### system commands'
 echo 'upd - close techno'
 echo 'exit - close techno'
@@ -27,6 +27,10 @@ echo -n 'Choose your number: '
   ;;
   pi)
    lxterminal --geometry=80x20 -e 'wget -c -T 5 https://portwine-linux.ru/ftp/portwine/PortProton-95 && sh "./PortProton-95"' &
+  ;;
+  pr)
+   rm -rf PortProton-95
+   rm -rf .PortProton-95
   ;;
   upd)
    ### update techno
