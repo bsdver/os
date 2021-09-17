@@ -17,7 +17,7 @@ echo 'prd - mkdir /usr/lib/x86_64-linux-gnu/ and download libs'
 echo '### service ubuntu compat'
 echo 'sud - install depence'
 echo 'sus - doing some'
-echo 'susc - go to chroot'
+echo 'suc - go to chroot'
 echo '### system commands'
 echo 'upd - close techno'
 echo 'exit - close techno'
@@ -127,7 +127,7 @@ ubuntu_start()
 load_rc_config $name
 run_rc_command "$1"
 EOF
-   sleep 4
+   sleep 2
    sudo chmod +x /usr/local/etc/rc.d/ubuntu
    sudo sysrc ubuntu_enable=YES
    sudo mkdir -p {/compat/ubuntu/dev/fd,/compat/ubuntu/dev/shm,/compat/ubuntu/home,/compat/ubuntu/tmp,/compat/ubuntu/proc,/compat/ubuntu/sys}
@@ -136,8 +136,16 @@ EOF
    sudo service ubuntu restart
    cd /compat/ubuntu/lib64/ && sudo rm ./ld-linux-x86-64.so.2 ; sudo ln -s ../lib/x86_64-linux-gnu/ld-2.31.so ld-linux-x86-64.so.2
   ;;
-  susc)
-   sudo chroot /compat/ubuntu /bin/bash
+  suc)
+   sudo chroot /compat/ubuntu /bin/bash -c 'printf "%b\n" "0.0 0 0.0\n0\nUTC" > /etc/adjtime'
+   sudo chroot /compat/ubuntu /bin/bash -c 'sudo dpkg-reconfigure tzdata'
+   sudo chroot /compat/ubuntu /bin/bash -c 'printf "APT::Cache-Start 251658240;" > /etc/apt/apt.conf.d/00aptitude'
+   sudo chroot /compat/ubuntu /bin/bash -c 'printf "deb http://archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse" > /etc/apt/sources.list'
+   sudo chroot /compat/ubuntu /bin/bash -c 'apt update ; apt install -y apt-transport-https curl fonts-symbola gnupg pulseaudio'
+   sudo chroot /compat/ubuntu /bin/bash -c 'curl -s https://brave-browser-apt-release.s3.brave.com/brave-core.asc | apt-key --keyring /etc/apt/trusted.gpg.d/brave-browser-release.gpg add -'
+   sudo chroot /compat/ubuntu /bin/bash -c 'echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list'
+   sudo chroot /compat/ubuntu /bin/bash -c 'apt update ; apt install -y brave-browser'
+   
   ;;   
   upd)
    ### update techno
