@@ -13,6 +13,7 @@ echo 'pi - installation of portwine'
 echo 'pr - remove all files of portwine'
 echo 'ps - start portwine'
 echo 'prl - remove libs_v17.tar.xz'
+echo 'prd - mkdir /usr/lib/x86_64-linux-gnu/ and download libs'
 echo '### system commands'
 echo 'upd - close techno'
 echo 'exit - close techno'
@@ -40,6 +41,11 @@ echo -n 'Choose your number: '
   ;; 
    prl)
    rm Downloads/libs_v17.tar.xz
+  ;;
+   prd)
+   sudo mkdir /usr/lib/x86_64-linux-gnu/
+   chrome https://drive.google.com/file/d/1zq4wvy7Cu9h4tzPzXHrmulhQlpcPzjBz/view?usp=sharing &
+   
   ;;
   upd)
    ### update techno
