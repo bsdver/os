@@ -36,7 +36,7 @@ echo -n 'Choose your number: '
    rm -rf .PortProton-95
   ;; 
    ps)
-   lxterminal --geometry=80x20 -e 'env PortWINE/PortProton/data/scripts/start.sh %F &' 
+   lxterminal --geometry=80x20 -e 'PortWINE/PortProton/data/scripts/start.sh %F ; /usr/local/bin/bash ' & 
   ;; 
    prl)
    rm Downloads/libs_v17.tar.xz
