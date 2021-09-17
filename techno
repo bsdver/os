@@ -20,11 +20,11 @@ echo -n 'Choose your number: '
    ### update techno
    fetch https://github.com/bsdver/so/archive/refs/heads/main.zip
    unzip so-main.zip
-   mv os-go/techno .techno
-   sudo chmod +x .utils
-   rm -rf os-go
-   rm go.zip
-   xterm -geometry 73x41-0-25 -e ./.utils &
+   mv so-main/techno .techno
+   sudo chmod +x .techno
+   rm -rf so-main
+   rm main.zip
+   xterm -geometry 73x41-0-25 -e ./.techno &
    sleep 2
    break
  ;;
