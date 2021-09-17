@@ -7,6 +7,8 @@ clear
 
 echo '### backup for proton packages'
 echo 'bp - create .i386-wine-pkg.tar.xz'
+echo '### create universal backup'
+echo 'cub - create archive.tar.xz from archive folder'
 echo '### portwine'
 echo 'pp - prepare for portwine'
 echo 'pi - installation of portwine'
@@ -29,6 +31,10 @@ echo -n 'Choose your number: '
   bp)
   export XZ_OPT=-9 
   tar cvJf .i386-wine-pkg.tar.xz .i386-wine-pkg
+  ;;
+  cub)
+  export XZ_OPT=-9 
+  tar cvJf archive.tar.xz archive
   ;;
   pp)
    echo 'nothing'
