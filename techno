@@ -26,7 +26,7 @@ echo -n 'Choose your number: '
    sleep 4
   ;;
   pi)
-   lxterminal --geometry=40x4 -e 'wget -c -T 5 https://portwine-linux.ru/ftp/portwine/PortProton-95 && sh "./PortProton-95"' &
+   lxterminal --geometry=80x20 -e 'wget -c -T 5 https://portwine-linux.ru/ftp/portwine/PortProton-95 && sh "./PortProton-95"' &
   ;;
   upd)
    ### update techno
