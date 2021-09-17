@@ -54,7 +54,7 @@ echo -n 'Choose your number: '
    lxterminal --geometry=40x4 -e 'sudo pkg ins -y debootstrap' &
   ;;   
   sus)
-cat << EOF > /usr/local/etc/rc.d/ubuntu    
+sudo cat << EOF > /usr/local/etc/rc.d/ubuntu    
 #!/bin/sh
 #
 # PROVIDE: ubuntu
