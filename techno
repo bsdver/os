@@ -11,6 +11,8 @@ echo '### portwine'
 echo 'pp - prepare for portwine'
 echo 'pi - installation of portwine'
 echo 'pr - remove all files of portwine'
+echo 'ps - remove all files of portwine'
+echo 'prl - remove all files of portwine'
 echo '### system commands'
 echo 'upd - close techno'
 echo 'exit - close techno'
@@ -33,7 +35,7 @@ echo -n 'Choose your number: '
    rm -rf PortProton-95
    rm -rf .PortProton-95
   ;; 
-   prr)
+   ps)
    lxterminal --geometry=80x20 -e 'env PortWINE/PortProton/data/scripts/start.sh %F &' 
   ;; 
    prl)
