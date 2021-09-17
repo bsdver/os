@@ -71,6 +71,7 @@ echo -n 'Choose your number: '
    sudo debootstrap --arch=amd64 --no-check-gpg focal /compat/ubuntu
    sudo service ubuntu restart
    cd /compat/ubuntu/lib64/ && sudo rm ./ld-linux-x86-64.so.2 ; sudo ln -s ../lib/x86_64-linux-gnu/ld-2.31.so ld-linux-x86-64.so.2
+   cd ~
 
    # chroot
    sudo chroot /compat/ubuntu /bin/bash -c 'printf "%b\n" "0.0 0 0.0\n0\nUTC" > /etc/adjtime'
