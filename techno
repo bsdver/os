@@ -17,7 +17,6 @@ echo 'ps - start portwine'
 echo 'prl - remove libs_v17.tar.xz'
 echo 'prd - mkdir /usr/lib/x86_64-linux-gnu/ and download libs'
 echo '### service ubuntu compat'
-echo 'sud - install depence'
 echo 'sus - doing some'
 echo 'suc - doing some in chroot'
 echo 'suf - final action'
@@ -56,88 +55,18 @@ echo -n 'Choose your number: '
   prd)
    sudo mkdir /usr/lib/x86_64-linux-gnu/
    lxterminal --geometry=40x4 -e 'chrome https://drive.google.com/file/d/1zq4wvy7Cu9h4tzPzXHrmulhQlpcPzjBz/view?usp=sharing' &
-  ;;
-  sud)
-   lxterminal --geometry=40x4 -e 'sudo pkg ins -y debootstrap' &
-  ;;   
+  ;;  
   sus)
-cat << EOF | sudo tee -a /usr/local/etc/rc.d/ubuntu
-#!/bin/sh
-#
-# PROVIDE: ubuntu
-# REQUIRE: archdep mountlate
-# KEYWORD: nojail
-#
-# This is a modified version of /etc/rc.d/linux
-# Based on the script by mrclksr:
-# https://github.com/mrclksr/linux-browser-installer/blob/main/rc.d/ubuntu.in
-#
-. /etc/rc.subr
-
-name="ubuntu"
-desc="Enable Ubuntu chroot, and Linux ABI"
-rcvar="ubuntu_enable"
-start_cmd="${name}_start"
-stop_cmd=":"
-
-unmounted()
-{
-    [ `stat -f "%d" "$1"` == `stat -f "%d" "$1/.."` -a \
-      `stat -f "%i" "$1"` != `stat -f "%i" "$1/.."` ]
-}
-
-ubuntu_start()
-{
-    local _emul_path _tmpdir
-
-    load_kld -e 'linux(aout|elf)' linux
-    case `sysctl -n hw.machine_arch` in
-    amd64)
-        load_kld -e 'linux64elf' linux64
-        ;;
-    esac
-    if [ -x /compat/ubuntu/sbin/ldconfigDisabled ]; then
-        _tmpdir=`mktemp -d -t linux-ldconfig`
-        /compat/ubuntu/sbin/ldconfig -C ${_tmpdir}/ld.so.cache
-        if ! cmp -s ${_tmpdir}/ld.so.cache /compat/ubuntu/etc/ld.so.cache; then
-            cat ${_tmpdir}/ld.so.cache > /compat/ubuntu/etc/ld.so.cache
-        fi
-        rm -rf ${_tmpdir}
-    fi
-
-    # Linux uses the pre-pts(4) tty naming scheme.
-    load_kld pty
-
-    # Handle unbranded ELF executables by defaulting to ELFOSABI_LINUX.
-    if [ `sysctl -ni kern.elf64.fallback_brand` -eq "-1" ]; then
-        sysctl kern.elf64.fallback_brand=3 > /dev/null
-    fi
-
-    if [ `sysctl -ni kern.elf32.fallback_brand` -eq "-1" ]; then
-        sysctl kern.elf32.fallback_brand=3 > /dev/null
-    fi
-    sysctl compat.linux.emul_path=/compat/ubuntu
-
-    _emul_path="/compat/ubuntu"
-    unmounted "${_emul_path}/dev" && (mount -o nocover -t devfs devfs "${_emul_path}/dev" || exit 1)
-    unmounted "${_emul_path}/dev/fd" && (mount -o nocover,linrdlnk -t fdescfs fdescfs "${_emul_path}/dev/fd" || exit 1)
-    unmounted "${_emul_path}/dev/shm" && (mount -o nocover,mode=1777 -t tmpfs tmpfs "${_emul_path}/dev/shm" || exit 1)
-    unmounted "${_emul_path}/home" && (mount -t nullfs /home "${_emul_path}/home" || exit 1)
-    unmounted "${_emul_path}/proc" && (mount -o nocover -t linprocfs linprocfs "${_emul_path}/proc" || exit 1)
-    unmounted "${_emul_path}/sys" && (mount -o nocover -t linsysfs linsysfs "${_emul_path}/sys" || exit 1)
-    unmounted "${_emul_path}/tmp" && (mount -t nullfs /tmp "${_emul_path}/tmp" || exit 1)
-    unmounted /dev/fd && (mount -o nocover -t fdescfs fdescfs /dev/fd || exit 1)
-    unmounted /proc && (mount -o nocover -t procfs procfs /proc || exit 1)
-    true
-}
-
-load_rc_config $name
-run_rc_command "$1"
-EOF
-   sleep 2
+   fetch https://github.com/bsdver/so/archive/refs/heads/main.zip
+   unzip main.zip
+   mv so-main/techno .techno
+   sudo chmod +x .techno
+   rm -rf so-main
+   rm main.zip
+   sudo pkg ins -y debootstrap
    sudo chmod +x /usr/local/etc/rc.d/ubuntu
    sudo sysrc ubuntu_enable=YES
-   sudo mkdir -p {/compat/ubuntu/dev/fd,/compat/ubuntu/dev/shm,/compat/ubuntu/home,/compat/ubuntu/tmp,/compat/ubuntu/proc,/compat/ubuntu/sys}
+   sudo /usr/local/bin/bash -c 'mkdir -p {/compat/ubuntu/dev/fd,/compat/ubuntu/dev/shm,/compat/ubuntu/home,/compat/ubuntu/tmp,/compat/ubuntu/proc,/compat/ubuntu/sys}'
    sudo service ubuntu start
    sudo debootstrap --arch=amd64 --no-check-gpg focal /compat/ubuntu
    sudo service ubuntu restart
@@ -155,98 +84,8 @@ EOF
    
   ;;
   suf)
-cat << EOF | sudo tee -a /compat/ubuntu/opt/brave.com/brave/brave-wrapper
-#!/compat/ubuntu/bin/bash
-#
-# Copyright (c) 2011 The Chromium Authors. All rights reserved.
-# Use of this source code is governed by a BSD-style license that can be
-# found in the LICENSE file.
 
-HERE="/opt/brave.com/brave"
-
-# We include some xdg utilities next to the binary, and we want to prefer them
-# over the system versions when we know the system versions are very old. We
-# detect whether the system xdg utilities are sufficiently new to be likely to
-# work for us by looking for xdg-settings. If we find it, we leave $PATH alone,
-# so that the system xdg utilities (including any distro patches) will be used.
-if ! which xdg-settings &> /dev/null; then
-  # Old xdg utilities. Prepend $HERE to $PATH to use ours instead.
-  export PATH="$HERE:$PATH"
-else
-  # Use system xdg utilities. But first create mimeapps.list if it doesn't
-  # exist; some systems have bugs in xdg-mime that make it fail without it.
-  xdg_app_dir="${XDG_DATA_HOME:-$HOME/.local/share/applications}"
-  mkdir -p "$xdg_app_dir"
-  [ -f "$xdg_app_dir/mimeapps.list" ] || touch "$xdg_app_dir/mimeapps.list"
-fi
-
-# Always use our versions of ffmpeg libs.
-# This also makes RPMs find the compatibly-named library symlinks.
-if [[ -n "$LD_LIBRARY_PATH" ]]; then
-  LD_LIBRARY_PATH="$HERE:$HERE/lib:$LD_LIBRARY_PATH"
-else
-  LD_LIBRARY_PATH="$HERE:$HERE/lib"
-fi
-export LD_LIBRARY_PATH
-
-export CHROME_VERSION_EXTRA="stable"
-
-# We don't want bug-buddy intercepting our crashes. http://crbug.com/24120
-export GNOME_DISABLE_CRASH_DIALOG=SET_BY_GOOGLE_CHROME
-
-# Sanitize std{in,out,err} because they'll be shared with untrusted child
-# processes (http://crbug.com/376567).
-exec < /dev/null
-exec > >(exec cat)
-exec 2> >(exec cat >&2)
-
-"$HERE/brave" --no-sandbox --test-type --v=0 "$@" || true
-EOF
-  sudo chmod +x /compat/ubuntu/opt/brave.com/brave/brave-wrapper
-cat << EOF | sudo tee -a /usr/local/bin/linux-brave
-#!/bin/sh
-
-# Ensure having working sound, independently of the DE/WM in use:
-get_pa_sock_path()
-{
-        PA_SOCK_PATH=$(sockstat | awk -v me=$(whoami) -F'[ \t]+' '
-                $1 == me && $2 == "pulseaudio" && $6 ~ /native/ {
-                        print $6;
-                        exit 0
-                }'
-        )
-}
-
-get_pa_sock_path
-if [ ! -S "$PA_SOCK_PATH" ]; then
-        while killall pulseaudio; do
-                sleep 0.5
-        done
-        pulseaudio --start
-        get_pa_sock_path
-fi
-[ -S "$PA_SOCK_PATH" ] && export PULSE_SERVER=unix:$PA_SOCK_PATH
-
-# Let the wrapped binary know that it has been run through the wrapper:
-export CHROME_WRAPPER="`readlink -f "$0"`"
-
-# Launch Brave through our custom brave-wrapper script:
-/compat/ubuntu/opt/brave.com/brave/brave-wrapper "$@"
-EOF
   sudo chmod +x /usr/local/bin/linux-brave
-cat << EOF >  ~/.local/share/applications/brave-browser.desktop
-[Desktop Entry]
-Type=Application
-Version=1.0
-Encoding=UTF-8
-Name=Brave Web Browser
-Comment=Access the Internet
-Icon=brave-browser
-Exec=/usr/local/bin/linux-brave %U
-Categories=Application;Network;WebBrowser;
-MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
-StartupNotify=true
-EOF
   sudo chmod +x ~/.local/share/applications/brave-browser.desktop
 
   ;;
