@@ -17,9 +17,7 @@ echo 'ps - start portwine'
 echo 'prl - remove libs_v17.tar.xz'
 echo 'prd - mkdir /usr/lib/x86_64-linux-gnu/ and download libs'
 echo '### service ubuntu compat'
-echo 'sus - doing some'
-echo 'suc - doing some in chroot'
-echo 'suf - final action'
+echo 'sus - install service with brave-browser'
 echo '### system commands'
 echo 'upd - close techno'
 echo 'exit - close techno'
@@ -57,13 +55,15 @@ echo -n 'Choose your number: '
    lxterminal --geometry=40x4 -e 'chrome https://drive.google.com/file/d/1zq4wvy7Cu9h4tzPzXHrmulhQlpcPzjBz/view?usp=sharing' &
   ;;  
   sus)
+   # depences  
+   sudo pkg ins -y debootstrap
+   
+   # fetch files
    fetch https://github.com/bsdver/so/archive/refs/heads/main.zip
    unzip main.zip
-   mv so-main/techno .techno
-   sudo chmod +x .techno
-   rm -rf so-main
-   rm main.zip
-   sudo pkg ins -y debootstrap
+
+   # autostart and some actions
+   mv so-main/script-techno-ubuntu /usr/local/etc/rc.d/ubuntu
    sudo chmod +x /usr/local/etc/rc.d/ubuntu
    sudo sysrc ubuntu_enable=YES
    sudo /usr/local/bin/bash -c 'mkdir -p {/compat/ubuntu/dev/fd,/compat/ubuntu/dev/shm,/compat/ubuntu/home,/compat/ubuntu/tmp,/compat/ubuntu/proc,/compat/ubuntu/sys}'
@@ -71,8 +71,8 @@ echo -n 'Choose your number: '
    sudo debootstrap --arch=amd64 --no-check-gpg focal /compat/ubuntu
    sudo service ubuntu restart
    cd /compat/ubuntu/lib64/ && sudo rm ./ld-linux-x86-64.so.2 ; sudo ln -s ../lib/x86_64-linux-gnu/ld-2.31.so ld-linux-x86-64.so.2
-  ;;
-  suc)
+
+   # chroot
    sudo chroot /compat/ubuntu /bin/bash -c 'printf "%b\n" "0.0 0 0.0\n0\nUTC" > /etc/adjtime'
    sudo chroot /compat/ubuntu /bin/bash -c 'sudo dpkg-reconfigure tzdata'
    sudo chroot /compat/ubuntu /bin/bash -c 'printf "APT::Cache-Start 251658240;" > /etc/apt/apt.conf.d/00aptitude'
@@ -82,12 +82,18 @@ echo -n 'Choose your number: '
    sudo chroot /compat/ubuntu /bin/bash -c 'echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list'
    sudo chroot /compat/ubuntu /bin/bash -c 'apt update ; apt install -y brave-browser'
    
-  ;;
-  suf)
+   # copy other files
+   mv so-main/script-techno-brave-wrapper /compat/ubuntu/opt/brave.com/brave/brave-wrapper
+   sudo chmod +x /compat/ubuntu/opt/brave.com/brave/brave-wrapper
+   mv so-main/script-techno-linux-brave /usr/local/bin/linux-brave
+   sudo chmod +x /usr/local/bin/linux-brave
+   mv so-main/script-techno-brave-browser.desktop ~/.local/share/applications/brave-browser.desktop
+   sudo chmod +x ~/.local/share/applications/brave-browser.desktop
 
-  sudo chmod +x /usr/local/bin/linux-brave
-  sudo chmod +x ~/.local/share/applications/brave-browser.desktop
-
+   # clean
+   rm -rf so-main
+   rm main.zip
+   
   ;;
   upd)
    ### update techno
