@@ -5,9 +5,10 @@ do
 
 clear
 
-echo '### create i386-wine-pkg.tar.xz (beta)'
-
+echo '### some tools'
+echo '1 - create i386-wine-pkg.tar.xz (beta)'
 echo 'exit - close techno'
+echo 'upd - close techno'
 echo ''
 echo -n 'Choose your number: '
  read ans
