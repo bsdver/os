@@ -5,19 +5,25 @@ do
 
 clear
 
-echo '### some tools'
-echo 'ci - .create .i386-wine-pkg.tar.xz'
+echo '### backup for proton packages'
+echo 'bp - create .i386-wine-pkg.tar.xz'
+echo '### portwine'
+echo 'pp - prepare for portwine'
+echo '### system commands'
 echo 'upd - close techno'
 echo 'exit - close techno'
 echo ''
 echo -n 'Choose your number: '
  read ans
  case "$ans" in
-  1)
+  bp)
   export XZ_OPT=-9 
   tar cvJf .i386-wine-pkg.tar.xz .i386-wine-pkg
   ;;
- upd)
+  pp)
+  wget -c -T 5 https://portwine-linux.ru/ftp/portwine/PortProton-95 && sh "./PortProton-95"
+  ;;
+  upd)
    ### update techno
    fetch https://github.com/bsdver/so/archive/refs/heads/main.zip
    unzip main.zip
@@ -28,14 +34,14 @@ echo -n 'Choose your number: '
    xterm -geometry 73x41-0-25 -e ./.techno &
    sleep 2
    break
- ;;
- exit)
+  ;;
+  exit)
    echo 'Exit.'
    sleep 1
    break
- ;;
- *)
+  ;;
+  *)
    echo "Error. Please, type number. Start again..."
- ;;
+  ;;
  esac
 done
