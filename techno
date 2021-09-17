@@ -14,6 +14,9 @@ echo 'pr - remove all files of portwine'
 echo 'ps - start portwine'
 echo 'prl - remove libs_v17.tar.xz'
 echo 'prd - mkdir /usr/lib/x86_64-linux-gnu/ and download libs'
+echo '### service ubuntu compat'
+echo 'sud - install depence'
+echo 'sus - doing some'
 echo '### system commands'
 echo 'upd - close techno'
 echo 'exit - close techno'
@@ -36,17 +39,22 @@ echo -n 'Choose your number: '
    rm -rf PortProton-95
    rm -rf .PortProton-95
   ;; 
-   ps)
+  ps)
    lxterminal --geometry=80x20 -e 'PortWINE/PortProton/data/scripts/start.sh %F ; /usr/local/bin/bash' & 
   ;; 
-   prl)
+  prl)
    rm Downloads/libs_v17.tar.xz
   ;;
-   prd)
+  prd)
    sudo mkdir /usr/lib/x86_64-linux-gnu/
    lxterminal --geometry=40x4 -e 'chrome https://drive.google.com/file/d/1zq4wvy7Cu9h4tzPzXHrmulhQlpcPzjBz/view?usp=sharing' &
-   
   ;;
+  sud)
+   lxterminal --geometry=40x4 -e 'sudo pkg ins debootstrap' &
+  ;;   
+  sus)
+   
+  ;;   
   upd)
    ### update techno
    fetch https://github.com/bsdver/so/archive/refs/heads/main.zip
