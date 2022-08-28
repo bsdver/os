@@ -49,7 +49,7 @@ mkdir /home/gdrive
 mkdir /root/backup
 
 echo "==> Configure VIM"
-cd /usr/local/share/vim/vim82
+cd /usr/local/share/vim/vim90
 cp vimrc_example.vim /usr/local/share/vimrc
 echo 'syntax on' > /root/.vimrc
 echo 'colorscheme murphy' >> /root/.vimrc
