@@ -45,6 +45,7 @@ chmod -R 777 /home/ftp
 echo "==> Add dir"
 mkdir /external
 mkdir /cachepkg
+mkdir -p /cachepkg/etc/ins/Box/
 mkdir /home/gdrive
 mkdir /root/backup
 
